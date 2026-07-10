@@ -1,2 +1,10 @@
 ---
 # tasks file for wazuh agent
+
+- name: Include agent install tasks
+  ansible.builtin.include_tasks: agent/install.yml
+  when: fabos_wazuh_service_state == "present"
+
+- name: Include agent uninstall tasks
+  ansible.builtin.include_tasks: agent/uninstall.yml
+  when: fabos_wazuh_service_state == "absent"
