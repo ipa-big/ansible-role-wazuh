@@ -11,5 +11,7 @@ fabos_wazuh_default_version: v4.14.6
 
 
 ## BACKEND:
-fabos_wazuh_default_backend_compose_dir: /opt/wazuh
+fabos_wazuh_default_wazuh_docker_git_url: "https://github.com/wazuh/wazuh-docker.git"
+fabos_wazuh_default_wazuh_docker_dir: "/opt/wazuh"
+fabos_wazuh_default_single_node_compose_dir: "{{ fabos_wazuh_default_wazuh_docker_dir }}/single-node"
 fabos_wazuh_default_backend_compose_url: "https://raw.githubusercontent.com/wazuh/wazuh-docker/refs/tags/{{ fabos_wazuh_backend_version | default(fabos_wazuh_default_version) }}/single-node/docker-compose.yml"
