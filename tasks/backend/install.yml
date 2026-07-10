@@ -1,20 +1,29 @@
 ---
 # tasks file for installing wazuh backend on docker
-- name: Create docker compose directory
-  ansible.builtin.file:
-    path: "{{ fabos_wazuh_backend_compose_dir | default(fabos_wazuh_default_backend_compose_dir) }}"
-    state: directory
-    mode: '0755'
-
-- name: Download Wazuh docker-compose.yml
-  ansible.builtin.get_url:
-    url: "{{ fabos_wazuh_default_backend_compose_url | default(fabos_wazuh_default_backend_compose_url) }}"
-    dest: "{{ fabos_wazuh_default_backend_compose_dir }}/"
-    mode: '0644'
-  register: downloaded_compose
-
-- name: Start docker compose workload
-  community.docker.docker_compose_v2:
-    project_src: "{{ fabos_wazuh_default_backend_compose_dir }}"
+- name: Set vm.max_map_count sysctl parameter
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: "262144"
+    sysctl_file: /etc/sysctl.d/99-wazuh.conf
     state: present
-  register: docker_compose_result
+    reload: yes
+
+- name: Compute final Wazuh version for compose URL
+  ansible.builtin.set_fact:
+    fabos_wazuh_final_version: "{{ fabos_wazuh_backend_version | default(fabos_wazuh_default_version) }}"
+
+- name: Clone Wazuh Docker repository
+  ansible.builtin.git:
+    repo: "{{ fabos_wazuh_default_wazuh_docker_git_url }}"
+    dest: "{{ fabos_wazuh_default_wazuh_docker_dir }}"
+    version: "{{ fabos_wazuh_final_version }}"
+  register: cloned_repo
+
+- name: Run docker compose workloads
+  community.docker.docker_compose_v2:
+    project_src: "{{ fabos_wazuh_default_single_node_compose_dir }}"
+    files: "{{ item }}"
+    state: present
+  loop:
+    - [generate-indexer-certs.yml]
+    - [docker-compose.yml]
