@@ -11,7 +11,8 @@ dependency:
 platforms:
   - name: wazuh-backend
     image: quay.io/containerdisks/ubuntu:24.04
-    volume_size: 15Gi
+    volume_size: 25Gi
+    instancetype: u1.large
 
 ansible:
   cfg:
