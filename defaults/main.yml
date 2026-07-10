@@ -1,0 +1,15 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for wazuh
+fabos_wazuh_default_service_types:
+  - backend
+  - agent
+fabos_wazuh_default_service_state_types:
+  - present
+  - absent
+fabos_wazuh_default_version: v4.14.6
+
+
+## BACKEND:
+fabos_wazuh_default_backend_compose_dir: /opt/wazuh
+fabos_wazuh_default_backend_compose_url: "https://raw.githubusercontent.com/wazuh/wazuh-docker/refs/tags/{{ fabos_wazuh_backend_version | default(fabos_wazuh_default_version) }}/single-node/docker-compose.yml"

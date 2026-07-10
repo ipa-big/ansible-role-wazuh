@@ -1,0 +1,31 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for wazuh
+- name: Validate configured Wazuh service
+  ansible.builtin.assert:
+    that:
+      - fabos_wazuh_service in fabos_wazuh_default_service_types
+    fail_msg: >-
+      fabos_wazuh_service must be one of {{ fabos_wazuh_default_service_types }}
+      but was {{ fabos_wazuh_service | default('unset') }}.
+    quiet: true
+
+- name: Validate configured Wazuh service state
+  ansible.builtin.assert:
+    that:
+      - fabos_wazuh_service_state in fabos_wazuh_default_service_state_types
+    fail_msg: >-
+      fabos_wazuh_service_state must be one of
+      {{ fabos_wazuh_default_service_state_types }} but was
+      {{ fabos_wazuh_service_state | default('unset') }}.
+    quiet: true
+
+- name: Include backend task file
+  ansible.builtin.include_tasks: backend.yml
+  when: fabos_wazuh_service == 'backend'
+
+- name: Include agent task file
+  ansible.builtin.include_tasks: agent.yml
+  when: fabos_wazuh_service == 'agent'
+
+

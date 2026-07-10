@@ -1,0 +1,10 @@
+---
+# tasks file for wazuh backend
+
+- name: Include backend install tasks
+  ansible.builtin.include_tasks: backend/install.yml
+  when: fabos_wazuh_service_state == "present"
+
+- name: Include backend uninstall tasks
+  ansible.builtin.include_tasks: backend/uninstall.yml
+  when: fabos_wazuh_service_state == "absent"
