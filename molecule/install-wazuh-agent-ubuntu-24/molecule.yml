@@ -8,6 +8,12 @@ dependency:
     role-file: requirements.yml
     requirements-file: requirements.yml
 
+platforms:
+  - name: wazuh-agent
+    image: quay.io/containerdisks/ubuntu:24.04
+    volume_size: 25Gi
+    instancetype: u1.large
+
 
 ansible:
   cfg:
@@ -33,16 +39,14 @@ ansible:
         - --execution-environment-image ghcr.io/ansible/community-ansible-dev-tools:latest
 
   playbooks:
-    create: create.yml
+    create: ../default/create-kv.yml
     converge: converge.yml
-    destroy: destroy.yml
+    destroy: ../default/destroy-kv.yml
     cleanup: cleanup.yml
-    prepare: prepare.yml
-    side_effect: side_effect.yml
     verify: verify.yml
 
 scenario:
-  name: default
+  name: install-wazuh-agent
   test_sequence:
     - dependency
     - cleanup

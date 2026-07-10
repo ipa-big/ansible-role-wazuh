@@ -1,0 +1,17 @@
+---
+# Purpose: assert that the instance really ended up in the expected state.
+# Molecule calls this playbook with `molecule verify`.
+- name: Verify
+  hosts: all
+  gather_facts: false # Quicker, if you do not need facts
+  tasks:
+    - name: Get service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert wazuh-agent service is running
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['wazuh-agent.service'].state == 'running'
+          - ansible_facts.services['wazuh-agent.service'].status == 'enabled'
+        fail_msg: "Wazuh agent service is not running or not enabled"
+        success_msg: "Wazuh agent service is running and enabled"
