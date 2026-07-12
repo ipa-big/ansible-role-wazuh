@@ -1,4 +1,9 @@
 ---
+- name: Assert Inputs
+  ansible.builtin.assert:
+    that:
+      - (fabos_wazuh_manager_ip is defined) and (fabos_wazuh_manager_ip | length > 0)
+
 - name: Install required packages for Wazuh repository
   ansible.builtin.apt:
     name:
@@ -23,7 +28,7 @@
     state: present
     update_cache: yes
   environment:
-    WAZUH_MANAGER: "10.0.0.2"
+    WAZUH_MANAGER: "{{ fabos_wazuh_manager_ip }}"
 
 - name: Reload systemd daemon
   ansible.builtin.systemd:

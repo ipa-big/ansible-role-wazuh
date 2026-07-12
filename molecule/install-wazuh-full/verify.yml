@@ -1,0 +1,5 @@
+---
+# Purpose: assert that the instance really ended up in the expected state.
+# Molecule calls this playbook with `molecule verify`.
+- ansible.builtin.import_playbook: ../install-wazu-backend/verify.yml
+- ansible.builtin.import_playbook: ../install-wazu-agent-ubuntu-24/verify.yml
