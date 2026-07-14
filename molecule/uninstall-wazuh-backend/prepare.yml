@@ -1,0 +1,16 @@
+---
+- name: Prepare
+  hosts: wazuh-backend
+  gather_facts: true
+  become: true
+  vars:
+    fabos_wazuh_service: backend
+    fabos_wazuh_service_state: present
+  tasks:
+    - name: Apply Docker role
+      ansible.builtin.include_role:
+        name: fabos.slm-ansible-role-docker
+
+    - name: Include wazuh role
+      ansible.builtin.include_role:
+        name: wazuh

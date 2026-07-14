@@ -1,0 +1,31 @@
+---
+# Purpose: verify Wazuh backend deployment state
+# Molecule calls this playbook with `molecule verify`
+- name: Verify Wazuh Backend Deployment
+  hosts: wazuh-backend
+  gather_facts: false
+  become: true
+  vars:
+    # Docker Compose project directory
+    wazuh_compose_dir: "{{ fabos_wazuh_default_backend_compose_dir | default('/opt/wazuh') }}"
+  vars_files:
+    - ../../defaults/main.yml
+  tasks:
+    - name: Gather facts about Docker host and containers
+      community.docker.docker_host_info:
+        containers: true
+      register: docker_host_facts
+
+    - name: Assert no Container is running
+      ansible.builtin.assert:
+        that:
+          - docker_host_facts.containers | length == 0
+        fail_msg: "Some containers are still running on the host."
+        success_msg: "No containers are running on the host."
+
+    - name: Assert Clone directory is removed
+      ansible.builtin.assert:
+        that:
+          - not (fabos_wazuh_default_wazuh_docker_dir is directory)
+        fail_msg: "Wazuh Docker directory still exists."
+        success_msg: "Wazuh Docker directory has been removed."
