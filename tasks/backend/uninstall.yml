@@ -1,5 +1,11 @@
 ---
+- name: Stat compose directory
+  ansible.builtin.stat:
+    path: "{{ fabos_wazuh_default_single_node_compose_dir }}"
+  register: compose_dir
+
 - name: Remove docker compose workloads
+  when: compose_dir.stat.exists
   community.docker.docker_compose_v2:
     project_src: "{{ fabos_wazuh_default_single_node_compose_dir }}"
     files: "{{ [item] }}"
