@@ -22,8 +22,8 @@
 - name: Run docker compose workloads
   community.docker.docker_compose_v2:
     project_src: "{{ fabos_wazuh_default_single_node_compose_dir }}"
-    files: "{{ item }}"
+    files: "{{ [item] }}"
     state: present
-  loop:
-    - [generate-indexer-certs.yml]
-    - [docker-compose.yml]
+  loop: "{{ fabos_wazuh_default_compose_files }}"
+    # - [generate-indexer-certs.yml]
+    # - [docker-compose.yml]
