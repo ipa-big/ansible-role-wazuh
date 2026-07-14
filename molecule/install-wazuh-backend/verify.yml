@@ -11,25 +11,25 @@
       - single-node-wazuh.manager-1
       - single-node-wazuh.indexer-1
       - single-node-wazuh.dashboard-1
-    
+
     # Required listening ports
     wazuh_required_ports:
-      - port: 443
+      - port: 5443    # Test var 'fabos_wazuh_default_compose_ports': Replace 443 with 5443 for Wazuh dashboard
       - port: 1514
       - port: 1515
       - port: 9200
       - port: 55000
-    
+
     # Docker Compose project directory
     wazuh_compose_dir: "{{ fabos_wazuh_default_backend_compose_dir | default('/opt/wazuh') }}"
-  
+
   tasks:
     - name: Verify Wazuh containers are running
       ansible.builtin.shell: |
         docker ps --format "{{ "{{" }}.Names{{ "}}" }}"
       register: running_containers
       changed_when: false
-    
+
     - name: Check that all Wazuh services are running
       ansible.builtin.assert:
         that:
@@ -39,7 +39,7 @@
       loop: "{{ wazuh_services }}"
       loop_control:
         label: "{{ item }}"
-    
+
     - name: Verify Wazuh required ports are listening
       ansible.builtin.wait_for:
         port: "{{ item.port }}"
@@ -49,5 +49,3 @@
         label: "Port {{ item.port }}"
       register: port_check_result
       changed_when: false
-
-
